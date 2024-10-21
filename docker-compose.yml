@@ -1,0 +1,35 @@
+version: '3'
+services:
+  nginx:
+    image: nginx:latest
+    container_name: my-nginx
+    ports:
+      - '80:80'
+    volumes:
+      - ./etc/nginx/conf.d/:/etc/nginx/conf.d/
+    depends_on:
+      - nextjs-app
+    environment:
+      - TZ=Asia/Seoul
+    networks:
+      - gotrip-network
+    restart: always
+
+  nextjs-app:
+    build:
+      context: .
+    container_name: nextjs-app
+
+    ports:
+      - '3000:3000'
+    env_file:
+      - .env.local
+    command: npm start
+    networks:
+      - gotrip-network
+    restart: always
+
+networks:
+  gotrip-network:
+    name: gotrip-network
+    driver: bridge
